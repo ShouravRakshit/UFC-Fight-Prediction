@@ -11,7 +11,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-import dj_database_url
 import os
 import environ
 
@@ -27,7 +26,7 @@ SECRET_KEY = 'django-insecure-t&p91e(5=46t*2wr-in5k^$k*#c@yr1b3(7xx1(ufqg()6hwhz
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
