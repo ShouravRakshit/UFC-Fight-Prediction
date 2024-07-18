@@ -10,9 +10,6 @@ function App() {
   return (
     <>
     <Header />
-     <h1>Hello World</h1>
-     <h2>Django</h2>
-     <h3>React</h3>
     <Search />
     <AddTodo />
     <br />
