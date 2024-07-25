@@ -1,3 +1,4 @@
+# This script scrapes the UFC Stats website to extract fighter data and save it to an Excel file. The script uses the Selenium WebDriver to interact with the website and extract the necessary information.
 # from selenium import webdriver
 # from selenium.webdriver.chrome.service import Service
 # from webdriver_manager.chrome import ChromeDriverManager
@@ -119,9 +120,8 @@
 # if __name__ == '__main__':
 #     scrape_data()
 
+
 # This script works properly only for the first five fighters whose names start with the letter 'a'. The script navigates to the UFC Stats website, scrapes the data for each fighter, and saves the data to an Excel file. The script uses the Selenium WebDriver to interact with the website and extract the necessary information.
-
-
 
 # from selenium import webdriver
 # from selenium.webdriver.chrome.service import Service
