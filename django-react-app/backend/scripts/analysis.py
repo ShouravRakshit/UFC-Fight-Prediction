@@ -1,17 +1,28 @@
 import pandas as pd
+import ast
 
 def load_data(file_path):
-    """Load the dataset from the fighter Excel file."""
     return pd.read_excel(file_path)
 
+def convert_to_dict(career_stats):
+    if isinstance(career_stats, str):
+        return ast.literal_eval(career_stats)
+    return career_stats
 
 def main():
-    # Load the data
-    file_path = 'fighter_data.xlsx'
+    file_path = 'cleaned_fighter_data.xlsx'  # Update with your file path
     df = load_data(file_path)
 
-    # Print the shape of the data
-    print(df['Career Statistics'][5])  
+    # Convert Career Statistics column to dictionaries
+    df['Career Statistics'] = df['Career Statistics'].apply(convert_to_dict)
 
-if __name__ == "__main__":
+    # Access a specific value within the first row's Career Statistics dictionary
+    first_row_career_stats = df['Career Statistics'][4]
+    print(first_row_career_stats)
+    
+    # Access a specific key's value
+    print(first_row_career_stats[''])  # Replace 'SLpM' with the key you want to access
+
+if __name__ == '__main__':
     main()
+
