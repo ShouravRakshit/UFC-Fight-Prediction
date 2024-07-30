@@ -37,6 +37,9 @@ def main():
     df['Fight History'] = df['Fight History'].apply(convert_to_dict)
     df['Record'] = df['Record'].apply(convert_to_dict)
 
+    # Filter out rows with empty fight history
+    df = df[df['Fight History'].map(lambda x: len(x) > 0)]
+
     # Split the 'Record' column and create new columns for Wins, Losses, Draws, and No Contest
     df['Wins'], df['Losses'], df['Draws'], df['No Contest'] = zip(*df['Record'].apply(split_record))
 
