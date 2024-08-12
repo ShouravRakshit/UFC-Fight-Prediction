@@ -44,7 +44,7 @@ def main():
     df['Wins'], df['Losses'], df['Draws'], df['No Contest'] = zip(*df['Record'].apply(split_record))
 
     # Save cleaned data back to a new Excel file
-    df.to_excel('cleaned_fighter_data_updated.xlsx', index=False)
+    df.to_excel('cleaned_fighter_data_updated1.xlsx', index=False)
 
 if __name__ == '__main__':
     main()
