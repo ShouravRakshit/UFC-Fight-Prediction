@@ -4,47 +4,58 @@ import ast
 def load_data(file_path):
     return pd.read_excel(file_path)
 
-def convert_to_dict(x):
-    try:
-        if isinstance(x, str) and x.startswith('RECORD: '):
-            return x.replace('RECORD: ', '').strip()
-        return ast.literal_eval(x)
-    except (ValueError, SyntaxError):
-        return x
-
 def split_record(record):
-    parts = record.split(' ')
-    # Split wins, losses, and draws
-    wld = parts[0].split('-')
-    if len(wld) == 2:  # If there is no draw part
-        wld.append('0')
-    # Check for No Contest (NC)
-    if len(parts) > 1 and parts[1] == '(1 NC)':
-        nc = '1'
-    else:
-        nc = '0'
-    return wld + [nc]
+    try:
+        # Strip any prefix and remove the 'NC' part if present
+        record = record.replace('RECORD: ', '').split(' (')[0].strip()
+        parts = record.split('-')
+        wins = int(parts[0])
+        losses = int(parts[1])
+        # Exclude draws for simplification
+        return [wins, losses]
+    except Exception as e:
+        print(f"Error processing record '{record}': {e}")
+        return [0, 0]  # Return default values in case of any parsing error
+
+def calculate_streaks(fight_history):
+    # Calculate streaks of wins and losses
+    wins, losses = 0, 0
+    max_wins, max_losses = 0, 0
+    
+    for fight in fight_history:
+        if fight['Outcome'] == 'WIN':
+            wins += 1
+            losses = 0
+        elif fight['Outcome'] == 'LOSS':
+            losses += 1
+            wins = 0
+        max_wins = max(max_wins, wins)
+        max_losses = max(max_losses, losses)
+    
+    return max_wins, max_losses
 
 def main():
-    file_path = 'cleaned_fighter_data.xlsx'  # Update with your file path
+    file_path = 'C:\\Work\\GeeksforGeek\\cleaned_fighter_data.xlsx'  # Update with your file path
     df = load_data(file_path)
 
-    # Drop the 'Nickname' column
-    df.drop(columns=['Nickname'], inplace=True)
+    # Convert 'Fight History' from string to list if needed
+    df['Fight History'] = df['Fight History'].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) else x)
 
-    # Convert columns to dictionaries
-    df['Career Statistics'] = df['Career Statistics'].apply(convert_to_dict)
-    df['Fight History'] = df['Fight History'].apply(convert_to_dict)
-    df['Record'] = df['Record'].apply(convert_to_dict)
+    # Filter out fighters with fewer than 8 fights
+    df = df[df['Fight History'].apply(lambda x: len(x) >= 8)]
 
-    # Filter out rows with empty fight history
-    df = df[df['Fight History'].map(lambda x: len(x) > 0)]
+    # Apply the modified split_record function
+    records = df['Record'].apply(split_record)
+    df[['Wins', 'Losses']] = pd.DataFrame(records.tolist(), index=df.index)
 
-    # Split the 'Record' column and create new columns for Wins, Losses, Draws, and No Contest
-    df['Wins'], df['Losses'], df['Draws'], df['No Contest'] = zip(*df['Record'].apply(split_record))
+    # Calculate win/loss streaks
+    df['Win Streak'], df['Loss Streak'] = zip(*df['Fight History'].apply(calculate_streaks))
 
-    # Save cleaned data back to a new Excel file
-    df.to_excel('cleaned_fighter_data_updated1.xlsx', index=False)
+    # Get results of the last 8 fights
+    df['Last 8 Fights'] = df['Fight History'].apply(lambda x: x[-8:])
+
+    # Save the cleaned data
+    df.to_excel("C:\\Work\\GeeksforGeek\\cleaned_fighter_data_updated2.xlsx", index=False)
 
 if __name__ == '__main__':
     main()
